@@ -1,6 +1,6 @@
 package com.microservice.user.model;
 
-public class UserModel {
+public class UserRecord {
 	private String UserId;
 	private String UserFirstName;
 	private String UserLastName;
