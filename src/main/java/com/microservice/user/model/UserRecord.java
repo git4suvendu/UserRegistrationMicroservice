@@ -1,37 +1,37 @@
 package com.microservice.user.model;
 
 public class UserRecord {
-	private String UserId;
-	private String UserFirstName;
-	private String UserLastName;
-	private String UserPassword;
+	
+	private String userid;
+	private String password;
+	private String firstname;
+	private String lastname;
+	
+	public String getUserid() {
+		return userid;
+	}
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getFirstname() {
+		return firstname;
+	}
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+	public String getLastname() {
+		return lastname;
+	}
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
 
-	public String getUserId() {
-		return UserId;
-	}
-	public void setUserId(String UserId) {
-		this.UserId = UserId;
-	}
+	
 
-	public String getUserFirstName() {
-		return UserFirstName;
-	}
-	public void setUserFirstName(String UserFirstName) {
-		this.UserFirstName = UserFirstName;
-	}
-
-	public String getUserLastName() {
-		return UserLastName;
-	}
-	public void setUserLastName(String UserLastName) {
-		this.UserLastName = UserLastName;
-	}
-	public String getUserPassword() {
-		return UserPassword;
-	}
-	public void setUserPassword(String userPassword) {
-		UserPassword = userPassword;
-	}
 }
-
-

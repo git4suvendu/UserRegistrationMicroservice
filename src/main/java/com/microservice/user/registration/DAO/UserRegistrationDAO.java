@@ -4,6 +4,6 @@ import java.util.List;
 import com.microservice.user.model.UserRecord;
 
 public interface UserRegistrationDAO {
-	public abstract String createUser (UserRecord user);	
+	public abstract int createUser (String UserId, String UserFirstName, String UserLastName);	
 	public abstract List<UserRecord> getAllUsers();
 }
