@@ -56,9 +56,7 @@ public class UserRegistrationController  {
 
 	   @RequestMapping(value = "/GetAllUsers", method = RequestMethod.GET)
 	   public ResponseEntity<Object> fetchAllUsers() {	
-		   // Need to do something to fetch record from DB
-		   
-	      return null;
+		   return new ResponseEntity<>(userRegDAO.getAllUsers(), HttpStatus.OK);		   
 	   }
 
 	   
