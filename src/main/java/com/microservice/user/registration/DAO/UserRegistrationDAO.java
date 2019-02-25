@@ -6,4 +6,5 @@ import com.microservice.user.model.UserRecord;
 public interface UserRegistrationDAO {
 	public abstract int createUser (String UserId, String UserFirstName, String UserLastName);	
 	public abstract List<UserRecord> getAllUsers();
+	public abstract int updateUser ( String UserId, String UserFirstName, String UserLastName);	
 }
