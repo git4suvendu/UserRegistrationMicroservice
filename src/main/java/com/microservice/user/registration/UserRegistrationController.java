@@ -22,6 +22,9 @@ public class UserRegistrationController  {
 	
 	@Autowired UserRegistrationDAOImplementation userRegDAO;
 	
+	// REST API Calling Method: POST
+	// http://localhost:8080/CreateUserUri?userid=1&&password=pass&&firstname=suvendu&&lastname=mandal
+	
 	   @RequestMapping(value = "/CreateUserUri",  method = RequestMethod.POST)
 	   public ResponseEntity<Object> createUserUri(@RequestParam("userid") String UserId, @RequestParam("password") String Password, 
 			   @RequestParam("firstname") String FirstName,   @RequestParam("lastname") String LastName ) {	
@@ -30,12 +33,23 @@ public class UserRegistrationController  {
 		   if(isNullOrEmpty(FirstName)) return new ResponseEntity<>("User First Name cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   if(isNullOrEmpty(LastName)) return new ResponseEntity<>("User Last Name cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   
-		   if(userRegDAO.createUser(UserId, FirstName, LastName) >= 1){
+		   if(userRegDAO.createUser(UserId, FirstName, LastName, Password ) >= 1){
 			      return new ResponseEntity<>("User has been created successfully", HttpStatus.CREATED);
 	        }else{
 	        	throw new UserRegistrationGenericException();
 	        }
 	   }
+	   
+	   
+		// REST API Calling Method: POST
+		// http://localhost:8080/CreateUser
+	   //In Msg Body:
+	   //{
+		//"userid":"1",
+		//"password":"pass",
+		//"firstname":"Suvendu",
+		//"lastname":"Mandal"
+	//  }
 	   
 	   @RequestMapping(value = "/CreateUser", headers="Content-Type=application/json", method = RequestMethod.POST)
 	   public ResponseEntity<Object> createUser(@RequestBody UserRecord userRecBody ) {	
@@ -43,12 +57,13 @@ public class UserRegistrationController  {
 		   String UserId = userRecBody.getUserid();
 		   String FirstName = userRecBody.getFirstname();
 		   String LastName = userRecBody.getLastname();
+		   String Password = userRecBody.getPassword();
 		   
 		   if(isNullOrEmpty(UserId)) return new ResponseEntity<>("User Id cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   if(isNullOrEmpty(FirstName)) return new ResponseEntity<>("User First Name cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   if(isNullOrEmpty(LastName)) return new ResponseEntity<>("User Last Name cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   
-		   if(userRegDAO.createUser(UserId, FirstName, LastName) >= 1){
+		   if(userRegDAO.createUser(UserId, FirstName, LastName, Password) >= 1){
 			      return new ResponseEntity<>("User has been created successfully", HttpStatus.CREATED);
 	        }else{
 	        	throw new UserRegistrationGenericException();
@@ -56,16 +71,28 @@ public class UserRegistrationController  {
 	   }
 
 
+		// REST API Calling Method: GET
+		// http://localhost:8080/GetAllUsers
+	   
 	   @RequestMapping(value = "/GetAllUsers", method = RequestMethod.GET)
 	   public ResponseEntity<Object> fetchAllUsers() {	
 		   return new ResponseEntity<>(userRegDAO.getAllUsers(), HttpStatus.OK);		   
 	   }
 
+		// REST API Calling Method: PUT
+		// http://localhost:8081/UpdateUserDetails/1
+	   
+	   //In Msg Body:
+	   //{
+		//"firstname":"Suvendu",
+		//"lastname":"Mandal"
+	//  }
 	   
 	   @RequestMapping(value = "/UpdateUserDetails/{userid}", headers="Content-Type=application/json", method = RequestMethod.PUT)
 	   public ResponseEntity<Object> updateUserDetails(@PathVariable("userid") String userid, @RequestBody UserRecord userRecBody) { 
-		   //if(!productRepo.containsKey(id))throw new ProductNotfoundException();
-		   String UserId = userRecBody.getUserid();
+	
+		   //String UserId = userRecBody.getUserid();
+		   String UserId = userid ;
 		   String FirstName = userRecBody.getFirstname();
 		   String LastName = userRecBody.getLastname();
 		   
@@ -78,10 +105,14 @@ public class UserRegistrationController  {
 	        }
 	   }
 	   
+	   
+		// REST API Calling Method: PUT
+		// http://localhost:8080/UpdateUserDetailsUri?userid=1&&firstname=suvendu&&lastname=mandal
+	   
 	   @RequestMapping(value = "/UpdateUserDetailsUri",  method = RequestMethod.PUT)
 	   public ResponseEntity<Object> updateUserDetailsUri(@RequestParam("userid") String UserId, 
 			   @RequestParam("firstname") String FirstName,   @RequestParam("lastname") String LastName) { 
-		   //if(!productRepo.containsKey(id))throw new ProductNotfoundException();
+
 		   if(isNullOrEmpty(UserId)) return new ResponseEntity<>("User Id cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   
 		   if(userRegDAO.updateUser(UserId, FirstName, LastName) >= 1){

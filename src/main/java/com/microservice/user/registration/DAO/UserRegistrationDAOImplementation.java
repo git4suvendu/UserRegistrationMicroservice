@@ -13,17 +13,27 @@ import com.microservice.user.model.UserRecord;
 public class UserRegistrationDAOImplementation implements UserRegistrationDAO {
 	
 	int StatusCode=-999;
+	int insert_status_code_1 = -999;
+	int insert_status_code_2 = -999;
+	int final_insert_status_code = -999;
 	
 	private final String INSERT_SQL = "INSERT INTO USER_REGISTERED(LOGIN_ID, FIRST_NAME, LAST_NAME) VALUES (?, ?, ?)";
+	private final String INSERT_SQL_2 = "INSERT INTO USER_LOGIN(LOGIN_ID, PASSWORD) VALUES (?,?)";
 	private final String SELECT_ALL_SQL = "SELECT * FROM  USER_REGISTERED" ;
 	
 	
 	@Autowired JdbcTemplate jdbcTemplate;
 
 	@Override
-   public int createUser(String UserId, String UserFirstName, String UserLastName)  {
-		return jdbcTemplate.update(INSERT_SQL,UserId,UserFirstName, UserLastName);
-
+   public int createUser(String UserId, String UserFirstName, String UserLastName, String UserPassword)  {
+		insert_status_code_1 =   jdbcTemplate.update(INSERT_SQL,UserId, UserFirstName, UserLastName);
+		insert_status_code_2 = jdbcTemplate.update(INSERT_SQL_2,UserId, UserPassword);
+		
+		if (insert_status_code_1 >=1 || insert_status_code_2 >= 1 )
+			final_insert_status_code = 1;
+			
+		return final_insert_status_code;
+		
 	}
 
 	@Override
