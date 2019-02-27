@@ -2,6 +2,7 @@ package com.microservice.user.registration;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,24 +11,51 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.client.RestTemplate;
 
 import com.microservice.user.model.UserRecord;
 import com.microservice.user.registration.DAO.*;
 import com.microservice.user.registration.exception.UserRegistrationGenericException;
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.EurekaClient;
+import com.netflix.discovery.shared.Application;
 
 
+@RefreshScope
 @RestController
 public class UserRegistrationController  {
 	
 	@Autowired UserRegistrationDAOImplementation userRegDAO;
+	@Autowired	RestTemplate restTemplate;
 	
+
+    @Autowired
+    private EurekaClient eurekaClient;
+    
+ // @Value("${spring.application.name}")
+ // private String applicationName;
+ 
+  
 	// REST API Calling Method: POST
 	// http://localhost:8080/CreateUserUri?userid=1&&password=pass&&firstname=suvendu&&lastname=mandal
 	
 	   @RequestMapping(value = "/CreateUserUri",  method = RequestMethod.POST)
 	   public ResponseEntity<Object> createUserUri(@RequestParam("userid") String UserId, @RequestParam("password") String Password, 
 			   @RequestParam("firstname") String FirstName,   @RequestParam("lastname") String LastName ) {	
+		  
+		//   System.out.println("Application Name:" +  applicationName);
+		   
+			 //Retrieving the UserSearchDelete Microservice URL from Eureka Server
+		   Application application = eurekaClient.getApplication( "UserSearchDelete" );
+		   InstanceInfo instanceInfo = application.getInstances().get(0);
+		  // System.out.println("failed here");
+		   String url = "http://" + instanceInfo.getIPAddr() + ":" + instanceInfo.getPort() + "/" + "SearchUser/" + UserId;
+		   System.out.println("Called Microservice URL: " + url);
+		   boolean UserIdExists = restTemplate.getForObject(url , boolean.class );
+		   
+			// boolean UserIdExists = restTemplate.getForObject("http://localhost:8091/SearchUser/"+UserId, boolean.class );
+
+			   if (UserIdExists) return new ResponseEntity<>("User Id already exists.", HttpStatus.CONFLICT); 
 		   
 		   if(isNullOrEmpty(UserId)) return new ResponseEntity<>("User Id cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   if(isNullOrEmpty(FirstName)) return new ResponseEntity<>("User First Name cannot be blank.", HttpStatus.BAD_REQUEST); 
@@ -58,6 +86,21 @@ public class UserRegistrationController  {
 		   String FirstName = userRecBody.getFirstname();
 		   String LastName = userRecBody.getLastname();
 		   String Password = userRecBody.getPassword();
+		   
+	       
+		//   System.out.println("Called Application Name:" +  applicationName);
+		   
+		 //Retrieving the UserSearchDelete Microservice URL from Eureka Server
+		   Application application = eurekaClient.getApplication( "UserSearchDelete" );
+		   InstanceInfo instanceInfo = application.getInstances().get(0);
+		   //System.out.println("failed here");
+		   String url = "http://" + instanceInfo.getIPAddr() + ":" + instanceInfo.getPort() + "/" + "SearchUser/" + UserId;
+		   System.out.println("Called Microservice URL: " + url);
+		   boolean UserIdExists = restTemplate.getForObject(url , boolean.class );
+		   
+			// boolean UserIdExists = restTemplate.getForObject("http://localhost:8091/SearchUser/"+UserId, boolean.class );
+
+			   if (UserIdExists) return new ResponseEntity<>("User Id already exists.", HttpStatus.CONFLICT); 
 		   
 		   if(isNullOrEmpty(UserId)) return new ResponseEntity<>("User Id cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   if(isNullOrEmpty(FirstName)) return new ResponseEntity<>("User First Name cannot be blank.", HttpStatus.BAD_REQUEST); 
