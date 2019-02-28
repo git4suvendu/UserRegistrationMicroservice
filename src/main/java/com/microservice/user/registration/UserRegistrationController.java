@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.microservice.user.model.UserRecord;
-import com.microservice.user.registration.DAO.*;
+import com.microservice.user.registration.DAO.UserRegistrationDAOImplementation;
 import com.microservice.user.registration.exception.UserRegistrationGenericException;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
@@ -90,7 +90,10 @@ public class UserRegistrationController  {
 		   String LastName = userRecBody.getLastname();
 		   String Password = userRecBody.getPassword();
 		   
-	       
+		   if(isNullOrEmpty(UserId)) return new ResponseEntity<>("User Id cannot be blank.", HttpStatus.BAD_REQUEST); 
+		   if(isNullOrEmpty(FirstName)) return new ResponseEntity<>("User First Name cannot be blank.", HttpStatus.BAD_REQUEST); 
+		   if(isNullOrEmpty(LastName)) return new ResponseEntity<>("User Last Name cannot be blank.", HttpStatus.BAD_REQUEST); 
+		          
 		//   System.out.println("Called Application Name:" +  applicationName);
 		   
 		 //Retrieving the UserSearchDelete Microservice URL from Eureka Server
@@ -110,14 +113,27 @@ public class UserRegistrationController  {
 			  
 		   if (UserIdExists) return new ResponseEntity<>("User Id already exists.", HttpStatus.CONFLICT); 
 		   
-		   if(isNullOrEmpty(UserId)) return new ResponseEntity<>("User Id cannot be blank.", HttpStatus.BAD_REQUEST); 
-		   if(isNullOrEmpty(FirstName)) return new ResponseEntity<>("User First Name cannot be blank.", HttpStatus.BAD_REQUEST); 
-		   if(isNullOrEmpty(LastName)) return new ResponseEntity<>("User Last Name cannot be blank.", HttpStatus.BAD_REQUEST); 
-		   
+
 		   if(userRegDAO.createUser(UserId, FirstName, LastName, Password) >= 1){
 			      return new ResponseEntity<>("User has been created successfully", HttpStatus.CREATED);
 	        }else{
 	        	throw new UserRegistrationGenericException();
+	        }
+	   }
+	   
+		// REST API Calling Method: PUT
+		// http://localhost:8081/DeleteUser/1
+	   @RequestMapping(value = "/DeleteUser/{userid}" , method = RequestMethod.POST)
+	   public ResponseEntity<Object> deleteUser(@PathVariable("userid") String UserId) {	   
+		   
+		   System.out.println("Within User Registration. UserId:" + UserId); 
+		   if(isNullOrEmpty(UserId)) return new ResponseEntity<>("User Id cannot be blank.", HttpStatus.BAD_REQUEST); 
+		   int DeleteStatusCode = restTemplate.getForObject("http://UserSearchDelete/CallDeleteUser/"+UserId, int.class );
+		   
+		   if(DeleteStatusCode == 200){
+			      return new ResponseEntity<>("User has been deleted successfully", HttpStatus.OK);
+	        }else{
+	        	return new ResponseEntity<>("User cannot be deleted. Internal error.", HttpStatus.BAD_REQUEST);
 	        }
 	   }
 
