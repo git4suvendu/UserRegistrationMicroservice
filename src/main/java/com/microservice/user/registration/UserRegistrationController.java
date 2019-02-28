@@ -98,7 +98,7 @@ public class UserRegistrationController  {
 		   
 		 //Retrieving the UserSearchDelete Microservice URL from Eureka Server
 		
-//		  Application application = eurekaClient.getApplication( "UserSearchDelete" );
+//		  Application application = eurekaClient.getApplication( "user-search-delete" );
 //		  InstanceInfo instanceInfo = application.getInstances().get(0);
 //		 
 //		   //System.out.println("failed here");
@@ -107,9 +107,8 @@ public class UserRegistrationController  {
 //		   boolean UserIdExists = restTemplate.getForObject(url , boolean.class );
 		   
 			// boolean UserIdExists = restTemplate.getForObject("http://localhost:8091/SearchUser/"+UserId, boolean.class );
-		    boolean UserIdExists = restTemplate.getForObject("http://UserSearchDelete/SearchUser/"+UserId, boolean.class );
-		   
-		  // boolean UserIdExists = restTemplate.getForObject("http://user-search-delete/SearchUser/"+UserId, boolean.class );
+		    boolean UserIdExists = restTemplate.getForObject("http://user-search-delete/SearchUser/"+UserId, boolean.class );
+		  
 			  
 		   if (UserIdExists) return new ResponseEntity<>("User Id already exists.", HttpStatus.CONFLICT); 
 		   
@@ -128,7 +127,7 @@ public class UserRegistrationController  {
 		   
 		   System.out.println("Within User Registration. UserId:" + UserId); 
 		   if(isNullOrEmpty(UserId)) return new ResponseEntity<>("User Id cannot be blank.", HttpStatus.BAD_REQUEST); 
-		   int DeleteStatusCode = restTemplate.getForObject("http://UserSearchDelete/CallDeleteUser/"+UserId, int.class );
+		   int DeleteStatusCode = restTemplate.getForObject("http://user-search-delete/CallDeleteUser/"+UserId, int.class );
 		   
 		   if(DeleteStatusCode == 200){
 			      return new ResponseEntity<>("User has been deleted successfully", HttpStatus.OK);
