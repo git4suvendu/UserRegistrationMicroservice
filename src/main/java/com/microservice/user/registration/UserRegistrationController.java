@@ -2,6 +2,7 @@ package com.microservice.user.registration;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,8 @@ public class UserRegistrationController  {
  // @Value("${spring.application.name}")
  // private String applicationName;
  
+    @Value("${eureka.instance.instance-id}")
+    private String instanceId;
   
 	// REST API Calling Method: POST
 	// http://localhost:8080/CreateUserUri?userid=1&&password=pass&&firstname=suvendu&&lastname=mandal
@@ -91,16 +94,21 @@ public class UserRegistrationController  {
 		//   System.out.println("Called Application Name:" +  applicationName);
 		   
 		 //Retrieving the UserSearchDelete Microservice URL from Eureka Server
-		   Application application = eurekaClient.getApplication( "UserSearchDelete" );
-		   InstanceInfo instanceInfo = application.getInstances().get(0);
-		   //System.out.println("failed here");
-		   String url = "http://" + instanceInfo.getIPAddr() + ":" + instanceInfo.getPort() + "/" + "SearchUser/" + UserId;
-		   System.out.println("Called Microservice URL: " + url);
-		   boolean UserIdExists = restTemplate.getForObject(url , boolean.class );
+		
+//		  Application application = eurekaClient.getApplication( "UserSearchDelete" );
+//		  InstanceInfo instanceInfo = application.getInstances().get(0);
+//		 
+//		   //System.out.println("failed here");
+//		   String url = "http://" + instanceInfo.getIPAddr() + ":" + instanceInfo.getPort() + "/" + "SearchUser/" + UserId;
+//		   System.out.println("Called Microservice URL: " + url);
+//		   boolean UserIdExists = restTemplate.getForObject(url , boolean.class );
 		   
 			// boolean UserIdExists = restTemplate.getForObject("http://localhost:8091/SearchUser/"+UserId, boolean.class );
-
-			   if (UserIdExists) return new ResponseEntity<>("User Id already exists.", HttpStatus.CONFLICT); 
+		    boolean UserIdExists = restTemplate.getForObject("http://UserSearchDelete/SearchUser/"+UserId, boolean.class );
+		   
+		  // boolean UserIdExists = restTemplate.getForObject("http://user-search-delete/SearchUser/"+UserId, boolean.class );
+			  
+		   if (UserIdExists) return new ResponseEntity<>("User Id already exists.", HttpStatus.CONFLICT); 
 		   
 		   if(isNullOrEmpty(UserId)) return new ResponseEntity<>("User Id cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   if(isNullOrEmpty(FirstName)) return new ResponseEntity<>("User First Name cannot be blank.", HttpStatus.BAD_REQUEST); 
