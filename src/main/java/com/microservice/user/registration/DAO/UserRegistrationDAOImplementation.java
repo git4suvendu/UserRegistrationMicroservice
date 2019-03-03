@@ -25,7 +25,7 @@ public class UserRegistrationDAOImplementation implements UserRegistrationDAO {
 	@Autowired JdbcTemplate jdbcTemplate;
 
 	@Override
-   public int createUser(String UserId, String UserFirstName, String UserLastName, String UserPassword)  {
+   public int createUsers(String UserId, String UserFirstName, String UserLastName, String UserPassword)  {
 		insert_status_code_1 =   jdbcTemplate.update(INSERT_SQL,UserId, UserFirstName, UserLastName);
 		insert_status_code_2 = jdbcTemplate.update(INSERT_SQL_2,UserId, UserPassword);
 		

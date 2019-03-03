@@ -4,6 +4,7 @@ package com.microservice.user.registration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,7 +65,7 @@ public class UserRegistrationController  {
 		   if(isNullOrEmpty(FirstName)) return new ResponseEntity<>("User First Name cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   if(isNullOrEmpty(LastName)) return new ResponseEntity<>("User Last Name cannot be blank.", HttpStatus.BAD_REQUEST); 
 		   
-		   if(userRegDAO.createUser(UserId, FirstName, LastName, Password ) >= 1){
+		   if(userRegDAO.createUsers(UserId, FirstName, LastName, Password ) >= 1){
 			      return new ResponseEntity<>("User has been created successfully", HttpStatus.CREATED);
 	        }else{
 	        	throw new UserRegistrationGenericException();
@@ -113,7 +114,7 @@ public class UserRegistrationController  {
 		   if (UserIdExists) return new ResponseEntity<>("User Id already exists.", HttpStatus.CONFLICT); 
 		   
 
-		   if(userRegDAO.createUser(UserId, FirstName, LastName, Password) >= 1){
+		   if(userRegDAO.createUsers(UserId, FirstName, LastName, Password) >= 1){
 			      return new ResponseEntity<>("User has been created successfully", HttpStatus.CREATED);
 	        }else{
 	        	throw new UserRegistrationGenericException();
