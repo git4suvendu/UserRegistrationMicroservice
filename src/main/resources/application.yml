@@ -2,7 +2,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://db-server.com:3306/WEBUSERDB?autoreconnect = true
+    url: jdbc:mysql://db-server:3306/WEBUSERDB?autoreconnect = true
     username: root
     password: mandal01
   application:
